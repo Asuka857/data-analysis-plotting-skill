@@ -1,6 +1,5 @@
 """真实渲染测试：验证出版级绘图核心库。"""
 
-import importlib.util
 import tempfile
 import unittest
 import warnings

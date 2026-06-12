@@ -1,24 +1,61 @@
-# Data Analysis Plotting
+# Data Analysis Plotting Skill
 
-面向学术出版的数据分析绘图核心库。它提供数据质量审查、局部出版样式、常用统计图和多格式导出，同时避免静默过滤数据、全局屏蔽警告和隐式统计聚合。
+面向科研绘图与学术出版的 Codex Skill，同时提供可独立复用的 Python 绘图核心库。
 
-## 核心能力
+它强调统计表达准确、原始数据可见、色盲友好配色和真实渲染验证，而不是简单套用所谓的 “Nature 风格”。未明确要求输出格式时，默认只生成一个 600 DPI PNG 文件。
 
-- `audit_dataframe()`：报告缺失值、重复值、无穷值和分组样本量。
-- `figure_size()`：生成单栏、双栏或自定义毫米宽度的画布尺寸。
-- `publication_style()`：通过上下文管理器应用局部样式，不污染全局配置。
-- `create_scatter_plot()`：散点图和可选线性拟合。
-- `create_bar_plot()`：显式汇总方法、误差线和原始观测点。
-- `create_distribution_plot()`：箱线图或小提琴图，并可保留原始点。
-- `create_line_plot()`：默认不聚合重复 X 值。
-- `create_heatmap()`：Pearson、Spearman 等相关性热图。
-- `save_figure()`：默认仅导出 600 DPI PNG；仅在明确传入 `formats` 时导出 PDF、SVG 或 TIFF。
+## 主要能力
 
-## 快速示例
+- 绘图前审查缺失值、重复值、无穷值和分组样本量。
+- 使用单栏、双栏或自定义毫米宽度创建出版尺寸图形。
+- 通过局部样式上下文避免污染 matplotlib 全局配置。
+- 创建散点图、汇总比较图、分布图、折线图和相关性热图。
+- 显式控制汇总方法、误差线、回归线和重复观测聚合。
+- 默认使用色盲友好配色，并保留原始观测信息。
+- 真实渲染测试覆盖绘图、错误输入、文件导出和示例语法。
+
+## 仓库结构
+
+```text
+data-analysis-plotting-skill/
+├── SKILL.md
+├── README.md
+├── requirements.txt
+├── test_skill.py
+├── scripts/
+│   └── plotting_functions.py
+└── examples/
+    └── plotting_examples.py
+```
+
+## 安装为 Codex Skill
+
+将仓库克隆到个人 Skill 目录：
+
+```powershell
+git clone https://github.com/Asuka857/data-analysis-plotting-skill.git `
+  "$HOME\.agents\skills\data-analysis-plotting-skill"
+```
+
+安装 Python 依赖：
+
+```powershell
+python -m pip install -r requirements.txt
+```
+
+新建 Codex 线程后，使用类似请求触发：
+
+```text
+使用 data-analysis-plotting 绘制论文级科研图，并检查数据质量。
+```
+
+## 独立使用核心库
 
 ```python
 from pathlib import Path
+
 import pandas as pd
+
 from scripts.plotting_functions import (
     audit_dataframe,
     create_scatter_plot,
@@ -37,10 +74,12 @@ fig, ax = create_scatter_plot(
     x_label="Predictor (unit)",
     y_label="Response (unit)",
 )
+
+# 未指定 formats 时仅生成 outputs/scatter.png。
 save_figure(fig, Path("outputs/scatter"))
 ```
 
-未指定格式时始终只生成 PNG。需要其他格式时显式请求：
+只有明确需要其他格式时才传入 `formats`：
 
 ```python
 save_figure(fig, Path("outputs/scatter"), formats=("png", "pdf"))
@@ -50,7 +89,10 @@ save_figure(fig, Path("outputs/scatter"), formats=("png", "pdf"))
 
 ```powershell
 python -m unittest -v test_skill.py
-python demo.py
 ```
 
-测试会真实渲染所有核心图形，并验证数据审查、路径导出、错误输入和示例语法。
+测试会使用无界面的 matplotlib 后端真实渲染所有核心图形。
+
+## 设计边界
+
+该项目是紧凑的出版级绘图核心工具库，不负责自动选择图表、自动执行统计检验或替代完整的数据分析流程。使用者仍需根据研究问题、实验设计和数据结构判断统计方法是否合理。
